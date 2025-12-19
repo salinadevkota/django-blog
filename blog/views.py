@@ -89,12 +89,11 @@ def post_update(request, id):
 def post_delete(request, id):
     post = get_object_or_404(Post, id=id)
 
-    if request.method == 'POST':
-        if post.author == request.user:
-            post.delete()
-        return redirect('post_list')
+    if post.author == request.user:
+        post.delete()
 
-    return redirect('post_detail', id=id)
+    return redirect('post_list')
+
 
 # ================= REGISTER =================
 def register_view(request):
@@ -115,8 +114,7 @@ def login_view(request):
     if request.method == 'POST':
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
-            user = form.get_user()
-            login(request, user)
+            login(request, form.get_user())
             return redirect('post_list')
     else:
         form = AuthenticationForm()
@@ -127,14 +125,4 @@ def login_view(request):
 # ================= LOGOUT =================
 def logout_view(request):
     logout(request)
-    return redirect('post_list')
-
-
-@login_required
-def post_delete(request, id):
-    post = get_object_or_404(Post, id=id)
-
-    if request.user == post.author:
-        post.delete()
-
     return redirect('post_list')
